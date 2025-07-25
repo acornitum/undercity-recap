@@ -1,5 +1,20 @@
 ---
+import Airtable from 'airtable';
 
+const AIRTABLE_API_KEY = import.meta.env.AIRTABLE_API_KEY;
+const BASE_ID = import.meta.env.AIRTABLE_BASE_ID;
+const TABLE_NAME = import.meta.env.AIRTABLE_TABLE_NAME;
+
+const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(BASE_ID);
+
+const records = await base(TABLE_NAME).select().all(); 
+
+const projects = records
+    .map((record) => ({
+        id: record.id,
+        ...record.fields,
+    }))
+    .sort((a, b) => a.id - b.id); 
 ---
 
 <html lang="en">
@@ -8,9 +23,143 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>Undercity</title>
+		<link rel="stylesheet" href="/src/styles/global.css" />
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<a href="https://hackclub.com/"><img style="position: absolute; top: 20px; left: 0px; border: 0; width: 256px; z-index: 999;" src="https://assets.hackclub.com/banners/2025.svg" alt="Hack Club"/></a>
+
+		<div class="relative w-full h-screen">
+			<img src="/gatesbackground.png" alt="Background" class="absolute top-0 left-0 w-full h-full object-cover" />
+			
+			<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+				<div class="text-white text-xl md:text-3xl font-bold">
+					<p>4-day Hardware Hackathon</p>
+					<img src="/undercitylogo.svg" class="px-10"/>
+					<p>July 11-14, 2025 @ GitHub HQ</p>
+				</div>
+            </div>
+		</div>
+
+		<div class="flex flex-col justify-center items-center mb-12">
+			<img src="/polaroids.png" class="px-10"/>
+
+			<p class="mt-12 max-w-xl text-center mx-5 mb-4">Undercity was a 4-day hardware hackathon @ GitHub HQ that happened July 11-14, 2025! It was hosted by Hack Club, for teenagers worldwide.</p>
+			<p class="text-center mx-5">166 teen makers ・ 75 total projects ・ 19 countries ・ 72 hours of magic ・ ∞ memories made</p>
+		</div>
+
+		<img src="projectsbanner.svg" class="w-full"/>
+
+		<div class="flex flex-col justify-center items-center my-12 mx-5">
+			<p class="text-3xl font-bold mb-6 text-center">Check out these projects made at Undercity!</p>
+
+			<p class="font-bold text-xl">Top 3</p>
+			<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6 md:mx-20">
+				{projects.slice(0, 3).map((project) => (
+					<div class="relative bg-[#231F56] rounded-md overflow-hidden outline-[#4440BB] outline-2 hover:outline-[#544FFF] hover:bg-[#100F23] hover:scale-102 transition duration-100 ease-in-out">
+						{/* Background Image */}
+						<div
+							class="absolute inset-0 bg-cover bg-center"
+							style={`
+								background-image: url(${project.image_url || '/default-image.png'});
+								mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+								-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+							`}
+						></div>
+
+						{/* Content Overlay */}
+						<div class="relative p-4 rounded-lg mb-24">
+							<h3 class="text-xl font-bold text-white">{project.name || "Unnamed Project"}</h3>
+							<p class="mt-4 opacity-80 line-clamp-4 fade-text">{project.description || "No description available."}</p>
+							<div class="flex flex-row">
+								<a
+									href={project.repo || "#"}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="bg-[#544FFF] rounded-4xl px-6 py-2 font-bold text-sm mt-6 mr-2 hover:bg-[#008CFF] transition duration-150 ease-in-out"
+								>
+									Repo
+								</a>								
+								<a
+									href={project.demo || "#"}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="bg-[#544FFF] rounded-4xl px-6 py-2 font-bold text-sm mt-6 hover:bg-[#FF0055] transition duration-150 ease-in-out"
+								>
+									Demo
+								</a>	
+							</div>
+
+						</div>
+        			</div>
+				))}
+			</div>
+
+			<p class="font-bold text-xl mt-8">Top 12</p>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6 md:mx-20">
+				{projects.slice(3, 12).map((project) => (
+					<div class="relative bg-[#231F56] rounded-md overflow-hidden outline-[#4440BB] outline-2 hover:outline-[#544FFF] hover:bg-[#100F23] hover:scale-102 transition duration-100 ease-in-out">
+						{/* Background Image */}
+						<div
+							class="absolute inset-0 bg-cover bg-center"
+							style={`
+								background-image: url(${project.image_url || '/default-image.png'});
+								mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+								-webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+							`}
+						></div>
+
+						{/* Content Overlay */}
+						<div class="relative p-4 rounded-lg mb-24">
+							<h3 class="text-xl font-bold text-white">{project.name || "Unnamed Project"}</h3>
+							<p class="mt-4 opacity-80 line-clamp-4 fade-text">{project.description || "No description available."}</p>
+							<div class="flex flex-row">
+								<a
+									href={project.repo || "#"}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="bg-[#544FFF] rounded-4xl px-6 py-2 font-bold text-sm mt-6 mr-2 hover:bg-[#008CFF] transition duration-150 ease-in-out"
+								>
+									Repo
+								</a>								
+								<a
+									href={project.demo || "#"}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="bg-[#544FFF] rounded-4xl px-6 py-2 font-bold text-sm mt-6 hover:bg-[#FF0055] transition duration-150 ease-in-out"
+								>
+									Demo
+								</a>	
+							</div>
+
+						</div>
+        			</div>
+				))}
+			</div>
+
+
+			<a href="/projects" class="bg-[#544FFF] rounded-4xl px-8 py-2 font-bold text-lg mt-6">See all 75 projects →</a>
+
+		</div>
+
+		<!-- <div class="flex flex-col justify-center items-center my-12">
+			<p class="text-3xl font-bold">Organizing Team</p>
+		</div> -->
+
+		<div class="flex flex-col justify-center items-center mt-12 mb-6">
+			<p>Made with ♡ by teenagers, for teenagers at Hack Club</p>
+			<p>
+				<span><a href="https://hackclub.com" class="underline hover:decoration-wavy transition-colors">Hack Club</a></span> ・
+				<span><a href="https://hackclub.com/slack" class="underline hover:decoration-wavy transition-colors">Slack</a></span> ・
+				<span><a href="https://hackclub.com/clubs" class="underline hover:decoration-wavy transition-colors">Clubs</a></span> ・
+				<span><a href="https://hackclub.com/hackathons" class="underline hover:decoration-wavy transition-colors">Hackathons</a></span>
+			</p>
+		</div>
+
+		<div>
+			<img src="finalpic.png" class="w-full"/>
+		</div>
+
 	</body>
 </html>
